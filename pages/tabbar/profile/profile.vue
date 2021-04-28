@@ -5,11 +5,11 @@
 				<u-icon name="arrow-downward" :size="46"></u-icon>
 				<view class="grid-text">更新活动类型</view>
 			</u-grid-item>
-			<u-grid-item>
+			<u-grid-item @click="getIntervals(1610090945, 1619093668)">
 				<u-icon name="arrow-downward" :size="46"></u-icon>
 				<view class="grid-text">同步时间记录</view>
 			</u-grid-item>
-			<u-grid-item>
+			<u-grid-item @click="getLastInterval()">
 				<u-icon name="hourglass" :size="46"></u-icon>
 				<view class="grid-text">沙漏</view>
 			</u-grid-item>
@@ -23,8 +23,10 @@
 		data() {
 			return {
 				authorization: ""
-
 			}
+		},
+		onLoad() {
+			this.getAuthorization();
 		},
 		methods: {
 			showErrorMessage() {
@@ -40,11 +42,11 @@
 				})
 			},
 			getAuthorization() {
+				const that = this;
 				uni.getStorage({
 					key: 'authorization',
 					success: function(res) {
-						this.authorization = res.data;
-						
+						that.authorization = res.data;
 					},
 					fail(err) {
 						uni.navigateTo({
@@ -83,8 +85,54 @@
 						}
 					}
 				});
+			},
+			getIntervals(from, to){
+				if(!this.authorzation){
+					this.getAuthorization();
+				}
+				// 尝试访问atimelogge，获取本地仓库没有的intervals
+				uni.request({
+					url: 'https://app.atimelogger.com/api/v2/intervals',
+					header: {
+						'Authorization': this.authorization
+					},
+					data:{
+						from,
+						to,
+						"limit": 999
+					},
+					// 访问成功后
+					success: (res) => {
+						// 跳转页面
+						if (res.statusCode == 200) {
+							console.log(res.data.intervals);
+							this.saveIntervals(res.data.intervals)
+							this.showSuccessMessage();
+						} else {
+						}
+					}
+				});
+			},
+			saveIntervals(intervals){
+				const that = this;
+				uni.setStorage({
+					key: 'intervals',
+					data: intervals,
+					success: function() {
+						console.log('intervals存储成功！');
+					}
+				});
+			},
+			getLastInterval(){
+				uni.getStorage({
+					key: 'intervals',
+					success: function(res) {
+						let intervals = res.data
+						return intervals[0];
+						//进行初始化
+					}
+					})
 			}
-
 		}
 	}
 </script>
