@@ -1,17 +1,21 @@
 <template>
 	<view>
-		<u-grid :col="3" >
-			<u-grid-item @click="getTypes()">
+		<u-grid :col="3">
+			<u-grid-item @click="updateTypes()">
 				<u-icon name="arrow-downward" :size="46"></u-icon>
 				<view class="grid-text">更新活动类型</view>
 			</u-grid-item>
-			<u-grid-item @click="getIntervals(1610090945, 1619093668)">
+			<u-grid-item @click="sync()">
 				<u-icon name="arrow-downward" :size="46"></u-icon>
 				<view class="grid-text">同步时间记录</view>
 			</u-grid-item>
-			<u-grid-item @click="getLastInterval()">
+			<u-grid-item @click="test()">
 				<u-icon name="hourglass" :size="46"></u-icon>
 				<view class="grid-text">沙漏</view>
+			</u-grid-item>
+			<u-grid-item @click="clear()">
+				<u-icon name="hourglass" :size="46"></u-icon>
+				<view class="grid-text">清除缓存</view>
 			</u-grid-item>
 		</u-grid>
 		<u-toast ref="uToast" />
@@ -25,10 +29,26 @@
 				authorization: ""
 			}
 		},
+		onShow() {
+		},
 		onLoad() {
-			this.getAuthorization();
+			
 		},
 		methods: {
+			clear(){
+				uni.clearStorage();
+			},
+			updateTypes(){
+				this.$store.dispatch('downloadTypes');
+			},
+			test(){
+				console.log(this.$store.state.authorization);
+				console.log(this.$store.state.types);
+				console.log(this.$store.state.intervals);
+			},
+			sync(){
+				this.$store.dispatch('sync');
+			},
 			showErrorMessage() {
 				this.$refs.uToast.show({
 					title: '获取失败',
@@ -43,10 +63,12 @@
 			},
 			getAuthorization() {
 				const that = this;
+				let authorzation;
 				uni.getStorage({
 					key: 'authorization',
 					success: function(res) {
 						that.authorization = res.data;
+						authorzation = res.data;
 					},
 					fail(err) {
 						uni.navigateTo({
@@ -54,6 +76,7 @@
 						});
 					}
 				});
+				return authorzation;
 			},
 			saveTypes(types) {
 				const parsed = JSON.stringify(types);
@@ -65,55 +88,8 @@
 					}
 				});
 			},
-			getTypes() {
-				// 尝试访问atimelogge
-				console.log(this.authorization);
-				uni.request({
-					url: 'https://app.atimelogger.com/api/v2/types',
-					header: {
-						'Authorization': this.authorization
-					},
-					// 访问成功后
-					success: (res) => {
-						if (res.statusCode == 200) {
-							this.showSuccessMessage();
-							// 保存authorization
-							this.saveTypes(res.data.types);
-						} else {
-							console.log(res.statusCode);
-							this.showErrorMessage();
-						}
-					}
-				});
-			},
-			getIntervals(from, to){
-				if(!this.authorzation){
-					this.getAuthorization();
-				}
-				// 尝试访问atimelogge，获取本地仓库没有的intervals
-				uni.request({
-					url: 'https://app.atimelogger.com/api/v2/intervals',
-					header: {
-						'Authorization': this.authorization
-					},
-					data:{
-						from,
-						to,
-						"limit": 999
-					},
-					// 访问成功后
-					success: (res) => {
-						// 跳转页面
-						if (res.statusCode == 200) {
-							console.log(res.data.intervals);
-							this.saveIntervals(res.data.intervals)
-							this.showSuccessMessage();
-						} else {
-						}
-					}
-				});
-			},
-			saveIntervals(intervals){
+
+			saveIntervals(intervals) {
 				const that = this;
 				uni.setStorage({
 					key: 'intervals',
@@ -123,16 +99,6 @@
 					}
 				});
 			},
-			getLastInterval(){
-				uni.getStorage({
-					key: 'intervals',
-					success: function(res) {
-						let intervals = res.data
-						return intervals[0];
-						//进行初始化
-					}
-					})
-			}
 		}
 	}
 </script>

@@ -1,6 +1,6 @@
 <template>
 	<view class="content">
-		<!-- <u-action-sheet :list="list" v-model="show"></u-action-sheet> -->
+
 	</view>
 </template>
 
@@ -10,18 +10,6 @@
 			return {}
 		},
 		onLoad() {
-			uni.getStorage({
-				key: 'authorization',
-				success: function(res) {
-					console.log("有数据！");
-					//进行初始化
-				},
-				fail(err) {
-					uni.navigateTo({
-					    url: '/pages/login/login'
-					});
-				}
-			});
 		},
 		methods: {
 

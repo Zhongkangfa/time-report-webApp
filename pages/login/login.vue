@@ -26,31 +26,11 @@
 					margin: '20px 50px'
 				},
 				waiting: false,
-				authorization: "",
 			}
 		},
 		methods: {
-			showEmptyErrorMessage() {
-				this.$refs.uToast.show({
-					title: '未输入',
-					type: 'error',
-				})
-			},
-			showErrorMessage() {
-				this.$refs.uToast.show({
-					title: '登录失败',
-					type: 'error',
-				})
-			},
-			showSuccessMessage() {
-				this.$refs.uToast.show({
-					title: '登录成功',
-					type: 'success',
-					isTab: true,
-					url: '/pages/tabbar/index/index'
-				})
-			},
 			login() {
+				const that = this;
 				if (!(this.account && this.password)) {
 					this.showEmptyErrorMessage();
 					return;
@@ -66,41 +46,61 @@
 					},
 					// 访问成功后
 					success: (res) => {
-						this.authorization = auth
 						// 跳转页面
 						if (res.statusCode == 200) {
+							this.$store.commit('setAuthorzation', auth);
 							this.showSuccessMessage();
 							// 保存authorization
-							this.saveAuthorization();
-							this.saveTypes(res.data.types);
-							this.waiting = false;
+							this.saveAuthorization(auth);
+							this.$store.commit('setTypes', res.data.types);
+							this.$store.dispatch('sync');
+							this.$store.dispatch('saveTypes');
+						} else if (res.statusCode == 401) {
+							this.showAuthorizationErrorMessage();
 						} else {
-							this.showErrorMessage();
-							this.waiting = false;
+							this.showErrorMessage(res.statusCode);
 						}
+						this.waiting = false;
 						console.log(res.statusCode);
 					}
 				});
 			},
-			saveAuthorization() {
+			saveAuthorization(auth) {
 				uni.setStorage({
 					key: 'authorization',
-					data: this.authorization,
+					data: auth,
 					success: function() {
 						console.log('Authorization存储成功！');
 					}
 				});
 			},
-			saveTypes(types) {
-				const parsed = JSON.stringify(types);
-				uni.setStorage({
-					key: 'types',
-					data: parsed,
-					success: function() {
-						console.log('types存储成功！');
-					}
-				});
-			}
+			showEmptyErrorMessage() {
+				this.$refs.uToast.show({
+					title: '未输入',
+					type: 'error',
+				})
+			},
+			showAuthorizationErrorMessage() {
+				this.$refs.uToast.show({
+					title: '账号或密码错误！',
+					type: 'error',
+				})
+			},
+			showErrorMessage(statusCode) {
+				this.$refs.uToast.show({
+					title: '登录失败: ' + statusCode,
+					type: 'error',
+				})
+			},
+			showSuccessMessage() {
+				this.$refs.uToast.show({
+					title: '登录成功',
+					type: 'success',
+					isTab: true,
+					url: '/pages/tabbar/index/index'
+				})
+			},
+
 		}
 	}
 </script>
