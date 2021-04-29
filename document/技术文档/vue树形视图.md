@@ -6,11 +6,11 @@ vue官方给出的例子： [树形视图 — Vue.js (vuejs.org)](https://cn.vue
 
 before：
 
-![1619701652129](C:\Users\kangfa\Desktop\作品与练习\time-report\document\image\tree_before.png)
+![tree_before](https://github.com/Zhongkangfa/time-report-webApp/blob/master/document/image/tree_before.png)
 
 after：
 
-![1619701788958](C:\Users\kangfa\Desktop\作品与练习\time-report\document\image\tree_after.png)
+![tree_after](https://github.com/Zhongkangfa/time-report-webApp/blob/master/document/image/tree_after.png)
 
 ## 代码领读
 
