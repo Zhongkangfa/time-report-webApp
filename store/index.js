@@ -17,8 +17,25 @@ const store = new Vuex.Store({
 		},
 		getAuthorization(state) {
 			return state.authorization;
-		}
+		},
+		getRootActivity(state){
+			let root = state.types.filter(activity => activity['parent'] == null);
+			return root;
+		},
+		getActivityChildren(state){
+			//好害怕内存泄露
+			return function(parentGuid){
+				return state.types.filter(activity => activity['parent'] == parentGuid);
+			}
+		},
+		getActivity(state){
+			//好害怕内存泄露
+			return function(guid){
+				return state.types.filter(activity => activity['guid'] == guid)[0];
+			}
+		},
 	},
+	//修改state的方法
 	mutations: {
 		setTypes(state, types) {
 			state.types = types;
@@ -52,6 +69,7 @@ const store = new Vuex.Store({
 
 					}
 					console.log(res.statusCode);
+					res = null;
 				}
 			});
 		},
@@ -74,11 +92,12 @@ const store = new Vuex.Store({
 					// 跳转页面
 					if (res.statusCode == 200) {
 						let intervals = res.data.intervals;
+						//console.log也容易产生内存泄露
 						console.log(intervals);
 						if (intervals.length != 0) {
 							const last = intervals[0]['to'];
 							const first = intervals[intervals.length - 1]['from'];
-							context.commit('addIntervals', res.data.intervals);
+							context.commit('addIntervals', intervals);
 							console.log("开始保存intervals");
 							context.dispatch('saveIntervals');
 							intervals = null;
@@ -93,6 +112,7 @@ const store = new Vuex.Store({
 						
 					}
 					console.log(res.statusCode);
+					res = null;
 				}
 			})
 		},

@@ -21,30 +21,25 @@
 				});
 			},
 			initTypes() {
-				const that = this;
 				uni.getStorage({
 					key: 'types',
-					success: function(res) {
-						that.$store.commit('setTypes', res.data);
+					success: (res) => {
+						this.$store.commit('setTypes', res.data);
 					},
-					fail(err) {
-						// uni.navigateTo({
-						//     url: '/pages/login/login'
-						// });
+					fail: (err) => {
+
 					}
 				});
 			},
 			initIntervals() {
 				console.log("来到initIntervals");
-				const that = this;
 				uni.getStorage({
 					key: 'intervals',
-					success: function(res) {
-						that.$store.commit('setIntervals', res.data);
+					success: (res) => {
+						this.$store.commit('setIntervals', res.data);
 					},
-					fail(err) {
-						that.$store.dispatch('sync');
-						// that.$store.dispatch('saveIntervals');
+					fail: (err) => {
+						this.$store.dispatch('sync');
 					}
 				});
 			}

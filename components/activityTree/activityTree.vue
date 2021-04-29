@@ -1,18 +1,16 @@
 <template>
 	<view>
-		生活
+		
 	</view>
 </template>
 
 <script>
 	export default {
+		name:"activityTree",
 		data() {
 			return {
 				
-			}
-		},
-		methods: {
-			
+			};
 		}
 	}
 </script>

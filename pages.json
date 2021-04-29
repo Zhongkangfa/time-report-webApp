@@ -1,12 +1,18 @@
 {
 	"easycom": {
-			"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
-		},
+		"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
+	},
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
 			"path": "pages/tabbar/index/index",
 			"style": {
 				"navigationBarTitleText": "首页"
+			}
+		}, {
+			"path": "pages/tabbar/activityTree/activityTree",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
 			}
 		}, {
 			"path": "pages/tabbar/profile/profile",
@@ -15,38 +21,22 @@
 				"enablePullDownRefresh": false
 			}
 
-		}, {
-			"path": "pages/tabbar/aim/aim",
+		},
+		{
+			"path": "pages/login/login",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
-
 		}, {
-			"path": "pages/tabbar/achievement/achievement",
+			"path": "pages/activityDetail/activityDetail",
 			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
-			"path": "pages/tabbar/life/life",
-			"style": {
-				"navigationBarTitleText": "",
+				"navigationBarTitleText": "活动详情",
 				"enablePullDownRefresh": false
 			}
 
 		}
-	    ,{
-            "path" : "pages/login/login",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-    ],
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
@@ -62,20 +52,12 @@
 				"text": "概览"
 			},
 			{
-				"pagePath": "pages/tabbar/aim/aim",
-				"text": "目标"
+				"pagePath": "pages/tabbar/activityTree/activityTree",
+				"text": "活动类别"
 			},
 			{
-				"pagePath": "pages/tabbar/achievement/achievement",
-				"text": "成就"
-			},
-			{
-				"pagePath": "pages/tabbar/life/life",
-				"text": "生命"
-			},
-			{
-				"pagePath":"pages/tabbar/profile/profile",
-				"text":"用户"
+				"pagePath": "pages/tabbar/profile/profile",
+				"text": "用户"
 			}
 		]
 	}

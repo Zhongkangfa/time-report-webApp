@@ -42,9 +42,10 @@
 				this.$store.dispatch('downloadTypes');
 			},
 			test(){
-				console.log(this.$store.state.authorization);
-				console.log(this.$store.state.types);
-				console.log(this.$store.state.intervals);
+				// console.log(this.$store.state.authorization);
+				console.log(this.$store.state.types[0]);
+				// console.log(this.$store.state.intervals[0]);
+				console.log(this.$store.getters.getRootActivity);
 			},
 			sync(){
 				this.$store.dispatch('sync');
