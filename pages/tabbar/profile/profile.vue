@@ -17,6 +17,18 @@
 				<u-icon name="hourglass" :size="46"></u-icon>
 				<view class="grid-text">清除缓存</view>
 			</u-grid-item>
+			<u-grid-item @click="saveSummary()">
+				<u-icon name="hourglass" :size="46"></u-icon>
+				<view class="grid-text">保存Summary</view>
+			</u-grid-item>
+			<u-grid-item @click="summarizing()">
+				<u-icon name="hourglass" :size="46"></u-icon>
+				<view class="grid-text">Summarizing</view>
+			</u-grid-item>
+			<u-grid-item @click="flashSummary()">
+				<u-icon name="hourglass" :size="46"></u-icon>
+				<view class="grid-text">flashSummary</view>
+			</u-grid-item>
 		</u-grid>
 		<u-toast ref="uToast" />
 	</view>
@@ -43,9 +55,18 @@
 			},
 			test(){
 				// console.log(this.$store.state.authorization);
-				console.log(this.$store.state.types[0]);
-				// console.log(this.$store.state.intervals[0]);
-				console.log(this.$store.getters.getRootActivity);
+				// console.log(this.$store.state.types);
+				console.log(this.$store.state.intervals);
+				console.log(this.$store.state.summary);
+			},
+			summarizing(){
+				this.$store.commit('summarizing', this.$store.state.intervals);
+			},
+			flashSummary(){
+				this.$store.commit('flashSummary');
+			},
+			saveSummary(){
+				this.$store.dispatch('saveSummary');
 			},
 			sync(){
 				this.$store.dispatch('sync');

@@ -53,6 +53,8 @@
 							// 保存authorization
 							this.saveAuthorization(auth);
 							this.$store.commit('setTypes', res.data.types);
+							this.$store.commit('flashSummary');//相当于setSummary了
+							this.$store.dispatch('saveSummary');
 							this.$store.dispatch('sync');
 							this.$store.dispatch('saveTypes');
 						} else if (res.statusCode == 401) {

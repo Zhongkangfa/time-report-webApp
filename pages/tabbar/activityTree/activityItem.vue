@@ -4,7 +4,7 @@
 			<!-- 父节点 -->
 			<u-cell-item @click="toggle" :title="item['name']" :arrow="false" :bg-color="getColor(colorNumber)"
 				:icon="isFolder? 'list': ''">
-				<div>
+				<div v-if="!isFolder">
 					<u-button @click="toActivityDetailPage()" :custom-style="customStyle" size="mini" :ripple="true">详情</u-button>
 				</div>
 			</u-cell-item>

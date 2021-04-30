@@ -42,6 +42,17 @@
 						this.$store.dispatch('sync');
 					}
 				});
+			},
+			initSummary() {
+				uni.getStorage({
+					key: 'summary',
+					success: (res) => {
+						this.$store.commit('setSummary', res.data);
+					},
+					fail: (err) => {
+						// this.$store.dispatch('sync');
+					}
+				});
 			}
 		},
 		destroyed() {
@@ -55,6 +66,7 @@
 				this.initTypes();
 				console.log("加载Intervals");
 				this.initIntervals();
+				this.initSummary();
 			}
 		},
 		onShow: function() {
