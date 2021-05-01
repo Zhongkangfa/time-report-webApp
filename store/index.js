@@ -257,7 +257,7 @@ const store = new Vuex.Store({
 				context.dispatch('_downloadIntervals', payload);
 			} else {
 				let date = new Date;
-				let year_2010 = moment([2021,3]).unix();
+				let year_2010 = moment([2020,0]).unix();
 				const payload = {
 					from: year_2010,
 					to: now,

@@ -1,10 +1,10 @@
 {
   "pages": [
     "pages/tabbar/index/index",
+    "pages/tabbar/activityTree/activityTree",
     "pages/tabbar/profile/profile",
-    "pages/tabbar/aim/aim",
-    "pages/tabbar/achievement/achievement",
-    "pages/tabbar/life/life"
+    "pages/login/login",
+    "pages/activityDetail/activityDetail"
   ],
   "subPackages": [],
   "window": {
@@ -15,32 +15,26 @@
   },
   "tabBar": {
     "color": "#808080",
-    "selectedColor": "#eeb174",
+    "selectedColor": "#00b386",
     "backgroundColor": "#FFFFFF",
     "list": [
       {
         "pagePath": "pages/tabbar/index/index",
-        "iconPath": "static/forumdiscusstion.png",
-        "selectedIconPath": "static/forumdiscusstion2.png",
+        "iconPath": "static/faxian.png",
+        "selectedIconPath": "static/faxian.png",
         "text": "概览"
       },
       {
-        "pagePath": "pages/tabbar/aim/aim",
-        "iconPath": "static/target.png",
-        "selectedIconPath": "static/target2.png",
-        "text": "目标"
+        "pagePath": "pages/tabbar/activityTree/activityTree",
+        "iconPath": "static/fenlei.png",
+        "selectedIconPath": "static/fenlei.png",
+        "text": "活动类别"
       },
       {
-        "pagePath": "pages/tabbar/achievement/achievement",
-        "iconPath": "static/trophy.png",
-        "selectedIconPath": "static/trophy2.png",
-        "text": "成就"
-      },
-      {
-        "pagePath": "pages/tabbar/life/life",
-        "iconPath": "static/hourglass.png",
-        "selectedIconPath": "static/hourglass2.png",
-        "text": "生命"
+        "pagePath": "pages/tabbar/profile/profile",
+        "iconPath": "static/shenfen.png",
+        "selectedIconPath": "static/shenfen.png",
+        "text": "用户"
       }
     ]
   },

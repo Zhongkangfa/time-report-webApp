@@ -217,10 +217,16 @@ module.exports = {
 		"padding": [15,10,0,15],
 		"xAxis": {
       "disableGrid": true,
+			"disabled": true,
 		},
 		"yAxis": {
       "gridType": "dash",
       "dashLength": 2,
+			"data": [
+				{
+					"min": 0
+					}
+				]
 		},
 		"legend": {
 		},

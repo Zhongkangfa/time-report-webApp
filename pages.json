@@ -45,18 +45,24 @@
 	},
 	"tabBar": {
 		"color": "#808080",
-		"selectedColor": "#eeb174",
+		"selectedColor": "#00b386",
 		"backgroundColor": "#FFFFFF",
 		"list": [{
 				"pagePath": "pages/tabbar/index/index",
+				"iconPath":"static/faxian.png",
+				"selectedIconPath":"static/faxian.png",
 				"text": "概览"
 			},
 			{
 				"pagePath": "pages/tabbar/activityTree/activityTree",
+				"iconPath":"static/fenlei.png",
+				"selectedIconPath":"static/fenlei.png",
 				"text": "活动类别"
 			},
 			{
 				"pagePath": "pages/tabbar/profile/profile",
+				"iconPath":"static/shenfen.png",
+				"selectedIconPath":"static/shenfen.png",
 				"text": "用户"
 			}
 		]

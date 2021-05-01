@@ -31,6 +31,12 @@
 			</u-grid-item>
 		</u-grid>
 		<u-toast ref="uToast" />
+		<u-cell-group>
+			<u-cell-item icon="account-fill" title="账号" :label="username"></u-cell-item>
+			<u-cell-item icon="setting-fill" title="个人设置"></u-cell-item>
+			<u-cell-item icon="question-circle-fill" title="帮助"></u-cell-item>
+			<u-cell-item icon="info" title="关于"></u-cell-item>
+		</u-cell-group>
 	</view>
 </template>
 
@@ -38,37 +44,37 @@
 	export default {
 		data() {
 			return {
-				authorization: ""
+				authorization: "",
+				username: "1470298128@qq.com"
 			}
 		},
-		onShow() {
-		},
+		onShow() {},
 		onLoad() {
-			
+
 		},
 		methods: {
-			clear(){
+			clear() {
 				uni.clearStorage();
 			},
-			updateTypes(){
+			updateTypes() {
 				this.$store.dispatch('downloadTypes');
 			},
-			test(){
+			test() {
 				// console.log(this.$store.state.authorization);
 				// console.log(this.$store.state.types);
 				console.log(this.$store.state.intervals);
 				console.log(this.$store.state.summary);
 			},
-			summarizing(){
+			summarizing() {
 				this.$store.commit('summarizing', this.$store.state.intervals);
 			},
-			flashSummary(){
+			flashSummary() {
 				this.$store.commit('flashSummary');
 			},
-			saveSummary(){
+			saveSummary() {
 				this.$store.dispatch('saveSummary');
 			},
-			sync(){
+			sync() {
 				this.$store.dispatch('sync');
 			},
 			showErrorMessage() {

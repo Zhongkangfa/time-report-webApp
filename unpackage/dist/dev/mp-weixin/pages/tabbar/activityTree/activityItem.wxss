@@ -1,0 +1,13 @@
+
+.item.data-v-1ddd8e68 {
+	cursor: pointer;
+}
+.bold.data-v-1ddd8e68 {
+	font-weight: bold;
+}
+._ul.data-v-1ddd8e68 {
+	padding-left: 1em;
+	line-height: 1.5em;
+	list-style-type: none;
+}
+
