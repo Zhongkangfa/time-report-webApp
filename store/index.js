@@ -8,10 +8,16 @@ const store = new Vuex.Store({
 		authorization: "",
 		types: [],
 		intervals: [],
-		summary: {}
+		summary: {},
+		downloadedIntervals: []
 	},
 	getters: {
 		getLastRecord(state) {
+			if (state.intervals != [] && state.intervals[0]) {
+				console.log("返回此时intervals的情况。");
+				console.log(state.intervals[0]);
+				console.log(state.intervals[0]['to'], state.intervals[state.intervals.length - 1]['from']);
+			}
 			return state.intervals[0];
 		},
 		getFirstRecord(state) {
@@ -46,7 +52,17 @@ const store = new Vuex.Store({
 			state.intervals = intervals;
 		},
 		addIntervals(state, intervals) {
-			state.intervals = intervals.concat(state.intervals);
+			console.log("给原来的数组接上最新的数据。");
+			state.downloadedIntervals = state.downloadedIntervals.concat(intervals);
+			console.log("接上后的头尾情况及长度");
+			// console.log(state.downloadedIntervals[0]['to'], state.downloadedIntervals[state.downloadedIntervals
+			// 	.length - 1]['from']);
+			console.log(state.downloadedIntervals.length);
+		},
+		merge(state) {
+			console.log("合并");
+			state.intervals = state.downloadedIntervals.concat(state.intervals);
+			state.downloadedIntervals = [];
 		},
 		setAuthorzation(state, authorzation) {
 			state.authorization = authorzation;
@@ -91,8 +107,8 @@ const store = new Vuex.Store({
 			//缓存
 			//不该在这里写。
 		},
-		summarizing(state, intervals) {
-			intervals.forEach(function(interval){
+		summarizing(state) {
+			state.downloadedIntervals.forEach(function(interval) {
 				//基本信息
 				let guid = interval['type']['guid'];
 				let activity_summary = state.summary[guid];
@@ -117,7 +133,7 @@ const store = new Vuex.Store({
 				let activity_weeks = state.summary[guid]['weeks'];
 				let activity_months = state.summary[guid]['months'];
 				let activity_years = state.summary[guid]['years'];
-				
+
 				//只是为了减少代码量，迫不得已这样写。以后可能看不懂。
 				let x = new Object();
 				//指向的会是同一个空间吗？
@@ -125,12 +141,12 @@ const store = new Vuex.Store({
 				x[start_week] = activity_weeks;
 				x[start_month] = activity_months;
 				x[start_year] = activity_years;
-				
+
 				let keys = Object.keys(x)
-				for (let i = 0; i <  keys.length; i++) {
+				for (let i = 0; i < keys.length; i++) {
 					let v = keys[i];
 					let k = x[v];
-					if(k[v] == undefined){
+					if (k[v] == undefined) {
 						k[v] = 0;
 					}
 					k[v] += duration;
@@ -156,23 +172,27 @@ const store = new Vuex.Store({
 					y[over_year] = activity_years;
 
 					keys = Object.keys(y)
-					for (let i = 0; i <  keys.length; i++) {
+					for (let i = 0; i < keys.length; i++) {
 						let v = keys[i];
 						let k = y[v];
-						if(k[v] == undefined){
+						if (k[v] == undefined) {
 							k[v] = 0;
 						}
 						k[v] += duration;
 					}
-					// state.summary[guid]['days'] = activity_days;
-					// state.summary[guid]['weeks'] = activity_weeks;
-					// state.summary[guid]['months'] = activity_months;
-					// state.summary[guid]['years'] = activity_years;
 					y = null;
 				}
 			});
-			console.log(state.summary);
 		},
+		check(state) {
+			console.log("查看是否有interval重复");
+			let y = [];
+			for (let interval of state.intervals) {
+				y.push(intervals['guid']);
+			}
+			console.log(y.length);
+			console.log(Array.from(new Set(y)).length);
+		}
 
 
 	},
@@ -202,6 +222,8 @@ const store = new Vuex.Store({
 			});
 		},
 		_downloadIntervals(context, payload) {
+			console.log("那么，我去下载咯");
+			console.log(payload.from, payload.to);
 			uni.request({
 				url: 'https://app.atimelogger.com/api/v2/intervals',
 				header: {
@@ -210,7 +232,7 @@ const store = new Vuex.Store({
 				data: {
 					"from": payload.from,
 					"to": payload.to,
-					"limit": 999
+					"limit": 99
 				},
 				// 访问成功后
 				success: (res) => {
@@ -218,20 +240,26 @@ const store = new Vuex.Store({
 					if (res.statusCode == 200) {
 						let intervals = res.data.intervals;
 						if (intervals.length != 0) {
+							console.log("下载成功！有数据：");
+							console.log(intervals[0]['to'], intervals[intervals.length - 1][
+								'from'
+							]);
 							context.commit('addIntervals', intervals);
-							context.commit('summarizing', intervals);
-
 							const last = intervals[0]['to'];
 							const first = intervals[intervals.length - 1]['from'];
-							console.log("开始保存intervals");
-							context.dispatch('saveIntervals');
+
 							intervals = null;
 							if (first > payload.from && first < payload.to) {
 								payload.to = first;
 								context.dispatch('_downloadIntervals', payload);
 								return;
 							}
+							console.log("--------结尾---------")
+							context.commit('summarizing');
 							context.dispatch('saveSummary');
+							context.commit('merge');
+							console.log("开始保存intervals");
+							context.dispatch('saveIntervals');
 							return;
 						} else {
 							console.log("已经是最新了！");
@@ -247,6 +275,9 @@ const store = new Vuex.Store({
 		sync(context) {
 			const authorization = context.getters.getAuthorization;
 			const last = context.getters.getLastRecord;
+			console.log("获取last：", last);
+			console.log('直接访问获取last:' , context.state.intervals[0]);
+			console.log(context.state.intervals);
 			const now = Math.round(new Date().getTime() / 1000);
 			if (last) {
 				const payload = {
@@ -257,7 +288,7 @@ const store = new Vuex.Store({
 				context.dispatch('_downloadIntervals', payload);
 			} else {
 				let date = new Date;
-				let year_2010 = moment([2020,0]).unix();
+				let year_2010 = moment([2021, 3]).unix();
 				const payload = {
 					from: year_2010,
 					to: now,

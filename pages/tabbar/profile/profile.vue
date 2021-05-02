@@ -62,8 +62,11 @@
 			test() {
 				// console.log(this.$store.state.authorization);
 				// console.log(this.$store.state.types);
-				console.log(this.$store.state.intervals);
-				console.log(this.$store.state.summary);
+				// console.log(this.$store.state.intervals);
+				for(let v of this.$store.state.intervals){
+					console.log(v['from'], v['to']);
+				}
+				// console.log(this.$store.state.summary);
 			},
 			summarizing() {
 				this.$store.commit('summarizing', this.$store.state.intervals);
