@@ -1,13 +1,13 @@
 <template>
-	<view class="content">
-		<!-- <view class="charts-box">
-		  <qiun-data-charts
-		    type="line"
-		    :chartData="chartData"
-		    background="none"
-		    :animation="false"
-		  />
-		</view> -->
+	<view>
+		<u-notice-bar mode="horizontal" :list="list" :speed="100" font-size="20"></u-notice-bar>
+		<u-search placeholder="日照香炉生紫烟" v-model="keyword" margin="15px"></u-search>
+		<view class="u-margin-26">
+			<u-icon name="clock" label="本周剩余时间"></u-icon>
+			<u-line-progress class="" active-color="#2979ff" :percent="50" :striped="true" :striped-active="true">
+			</u-line-progress>
+		</view>
+		<u-button @click="open">云函数</u-button>
 	</view>
 </template>
 
@@ -15,54 +15,31 @@
 	export default {
 		data() {
 			return {
-				chartData: {
-					"categories": [
-						"2016",
-						"2017",
-						"2018",
-						"2019",
-						"2020",
-						"2021"
-					],
-					"series": [{
-							"name": "成交量A",
-							"data": [
-								35,
-								8,
-								25,
-								37,
-								4,
-								20
-							]
-						},
-						{
-							"name": "成交量B",
-							"data": [
-								70,
-								40,
-								65,
-								100,
-								44,
-								68
-							]
-						},
-						{
-							"name": "成交量C",
-							"data": [
-								100,
-								80,
-								95,
-								150,
-								112,
-								132
-							]
-						}
-					]
-				}
+				keyword: "",
+				list: [
+					'寒雨连江夜入吴',
+					'平明送客楚山孤',
+					'洛阳亲友如相问',
+					'一片冰心在玉壶'
+				]
 			}
 		},
 		onLoad() {},
 		methods: {
+			open(){
+				uniCloud.callFunction({
+					name:"addInterval",
+					data:{
+						name:"张三"
+					},
+					success(res){
+						console.log("访问成功：",res);
+					},
+					fail(err) {
+						console.log("访问失败：",err);
+					}
+				})
+			}
 
 		}
 	}

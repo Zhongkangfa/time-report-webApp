@@ -6,15 +6,43 @@
 		</view>
 		<view>
 			<u-select v-model="show" mode="mutil-column-auto" :list="list" @confirm="confirm"></u-select>
-			<view class="u-flex u-flex-nowrap u-row-center">
-				<u-button>
-					<u-icon name="arrow-leftward" @click="leftOrRight('left')"></u-icon>
-				</u-button>
-				<u-button class="u-flex-1" @click="show = true">查询</u-button>
-				<u-button>
-					<u-icon name="arrow-rightward" @click="leftOrRight('right')"></u-icon>
-				</u-button>
+			<view class="u-flex u-flex-nowrap u-row-center u-margin-26" style="text-align: center;">
+				<u-icon class="u-flex-1" label-pos="bottom" size="50" name="arrow-leftward"
+					@click="leftOrRight('left')"></u-icon>
+				<u-icon class="u-flex-1" label-pos="bottom" size="50" name="search" @click="show = true"></u-icon>
+				<u-icon class="u-flex-1" label-pos="bottom" size="50" name="calendar"></u-icon>
+				<u-icon class="u-flex-1" label-pos="bottom" size="50" name="arrow-rightward"
+					@click="leftOrRight('right')"></u-icon>
 			</view>
+			<u-grid :col="3">
+				<u-grid-item>
+					<u-count-to :start-val="0.00" :end-val="9.00" :decimals="2" :duration="3000"></u-count-to>
+					<view class="grid-text">平均值</view>
+				</u-grid-item>
+				<u-grid-item>
+					<u-count-to :start-val="0.00" :end-val="8.10" :decimals="2" :duration="3000"></u-count-to>
+					<view class="grid-text">中位数</view>
+				</u-grid-item>
+				<u-grid-item>
+					<u-count-to :start-val="0.00" :end-val="8.10" :decimals="2" :duration="3000"></u-count-to>
+					<view class="grid-text">本周最大值</view>
+				</u-grid-item>
+				<u-grid-item>
+					<u-count-to :start-val="0.00" :end-val="8.10" :decimals="2" :duration="3000"></u-count-to>
+					<view class="grid-text">本周最低值</view>
+				</u-grid-item>
+				<u-grid-item>
+					<u-count-to :start-val="30" :end-val="500" :duration="3000"></u-count-to>
+					<view class="grid-text">今年累计</view>
+				</u-grid-item>
+				<u-grid-item>
+					<view class="u-flex">
+						<u-count-to :start-val="0" :end-val="70" :duration="3000"></u-count-to>
+						<p>%</p>
+					</view>
+					<view class="grid-text">目标达成率</view>
+				</u-grid-item>
+			</u-grid>
 		</view>
 	</view>
 </template>

@@ -7,18 +7,14 @@
 		},
 		methods: {
 			initAuth() {
-				const that = this;
-				uni.getStorage({
-					key: 'authorization',
-					success: function(res) {
-						that.$store.commit('setAuthorzation', res.data);
-					},
-					fail(err) {
-						uni.navigateTo({
-							url: '/pages/login/login'
-						});
-					}
-				});
+				let token = uni.getStorageSync('uni_id_token');
+				if(token){
+				this.$store.commit('setToken', token);
+				}else{
+					uni.navigateTo({
+					    url: 'pages/login/login'
+					});
+				}
 			},
 			initTypes() {
 				uni.getStorage({
@@ -61,12 +57,14 @@
 		onLaunch: function() {
 			console.log("app launch");
 			this.initAuth();
-			if (this.$store.state.authorization != 0) {
-				console.log("加载Types");
-				this.initTypes();
-				console.log("加载Intervals");
-				this.initIntervals();
-				this.initSummary();
+			if (this.$store.state.token != "") {
+				// console.log("加载Types");
+				// this.initTypes();
+				// console.log("加载Intervals");
+				// this.initIntervals();
+				// this.initSummary();
+			}else{
+				
 			}
 		},
 		onShow: function() {

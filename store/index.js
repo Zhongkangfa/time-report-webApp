@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
 	state: {
+		token: "",
 		authorization: "",
 		types: [],
 		intervals: [],
@@ -27,19 +28,22 @@ const store = new Vuex.Store({
 			return state.authorization;
 		},
 		getRootActivity(state) {
+			console.log("触发getRootActivity");
 			let root = state.types.filter(activity => activity['parent'] == null);
 			return root;
 		},
 		getActivityChildren(state) {
 			//好害怕内存泄露
+			console.log("触发getActivityChildren");
 			return function(parentGuid) {
 				return state.types.filter(activity => activity['parent'] == parentGuid);
 			}
 		},
 		getActivity(state) {
 			//好害怕内存泄露
-			return function(guid) {
-				return state.types.filter(activity => activity['guid'] == guid)[0];
+			console.log("触发getActivity");
+			return function(id) {
+				return state.types.filter(activity => activity['id'] == id)[0];
 			}
 		},
 	},
@@ -47,6 +51,9 @@ const store = new Vuex.Store({
 	mutations: {
 		setTypes(state, types) {
 			state.types = types;
+		},
+		addType(state, type){
+			state.types.push(type);
 		},
 		setIntervals(state, intervals) {
 			state.intervals = intervals;
@@ -67,6 +74,9 @@ const store = new Vuex.Store({
 		setAuthorzation(state, authorzation) {
 			state.authorization = authorzation;
 		},
+		setToken(state, token) {
+			state.token = token;
+		},
 		setSummary(state, summary) {
 			state.summary = summary;
 		},
@@ -79,8 +89,8 @@ const store = new Vuex.Store({
 			let keys = Object.keys(state.summary);
 			if (keys.length != 0) {
 				for (let key of keys) {
-					let types_guid = state.types.filter((activity) => (!activity['group']) && (activity[
-						'guid'] == key));
+					let types_guid = state.types.filter((activity) => (!activity['id']) && (activity[
+						'id'] == key));
 					if (!types_guid) {
 						delete state.summary[key];
 					}
@@ -90,7 +100,7 @@ const store = new Vuex.Store({
 			//初始化与新增
 			state.types.forEach((type) => {
 				if (!type['group']) {
-					let guid = type['guid'];
+					let guid = type['id'];
 					//！这两者之后居然没有关联！
 					let activity_summary = state.summary[guid];
 					if (activity_summary == undefined) {
@@ -197,6 +207,9 @@ const store = new Vuex.Store({
 
 	},
 	actions: {
+		test(context, activity){
+			context.commit('addType1', activity);
+		},
 		downloadTypes(context) {
 			uni.request({
 				url: 'https://app.atimelogger.com/api/v2/types',
@@ -276,7 +289,7 @@ const store = new Vuex.Store({
 			const authorization = context.getters.getAuthorization;
 			const last = context.getters.getLastRecord;
 			console.log("获取last：", last);
-			console.log('直接访问获取last:' , context.state.intervals[0]);
+			console.log('直接访问获取last:', context.state.intervals[0]);
 			console.log(context.state.intervals);
 			const now = Math.round(new Date().getTime() / 1000);
 			if (last) {
@@ -308,6 +321,9 @@ const store = new Vuex.Store({
 			});
 		},
 		saveIntervals(context) {
+			if (context.state.intervals.length > 10000) {
+				context.state.intervals.length = 10000;
+			}
 			uni.setStorage({
 				key: 'intervals',
 				data: context.state.intervals,

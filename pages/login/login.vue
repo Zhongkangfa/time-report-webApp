@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<h2>请输入atimelogger的账号和密码</h2>
+		<h2>请输入账号和密码</h2>
 		<u-field v-model="account" label="账号" placeholder="请填写账号" required>
 		</u-field>
 
@@ -12,6 +12,11 @@
 			登录
 			<u-loading :show="waiting"></u-loading>
 		</u-button>
+<!-- 		<u-button type="primary" shape="square" :ripple="true" ripple-bg-color="#a0cfff" :custom-style="customStyle"
+			@click="register()">
+			注册
+			<u-loading :show="waiting"></u-loading>
+		</u-button> -->
 		<u-toast ref="uToast" />
 	</view>
 </template>
@@ -29,36 +34,25 @@
 			}
 		},
 		methods: {
+			register() {},
 			login() {
-				const that = this;
-				if (!(this.account && this.password)) {
-					this.showEmptyErrorMessage();
-					return;
-				}
+				const data = {
+					username: this.account,
+					password: this.password,
+				};
 				this.waiting = true;
-				// 加密
-				let auth = 'Basic ' + btoa(this.account + ":" + this.password);
-				// 尝试访问atimelogge
-				uni.request({
-					url: 'https://app.atimelogger.com/api/v2/types',
-					header: {
-						'Authorization': auth
-					},
-					// 访问成功后
+				uniCloud.callFunction({
+					name: 'login',
+					data,
+					//回调函数
 					success: (res) => {
 						// 跳转页面
-						if (res.statusCode == 200) {
-							this.$store.commit('setAuthorzation', auth);
+						if (res.result.code === 0) {
+							console.log("登录成功！");
+							uni.setStorageSync('uni_id_token', res.result.token)
+							uni.setStorageSync('username', res.result.username)
+							//之后需要访问云函数下载intervals和types
 							this.showSuccessMessage();
-							// 保存authorization
-							this.saveAuthorization(auth);
-							this.$store.commit('setTypes', res.data.types);
-							this.$store.commit('flashSummary');//相当于setSummary了
-							this.$store.dispatch('saveSummary');
-							this.$store.dispatch('sync');
-							this.$store.dispatch('saveTypes');
-						} else if (res.statusCode == 401) {
-							this.showAuthorizationErrorMessage();
 						} else {
 							this.showErrorMessage(res.statusCode);
 						}

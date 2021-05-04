@@ -4,14 +4,18 @@
 			<!-- 父节点 -->
 			<u-cell-item @click="toggle" :title="item['name']" :arrow="false" :bg-color="getColor(colorNumber)"
 				:icon="isFolder? 'list': ''">
-				<div v-if="!isFolder">
-					<u-button @click="toActivityDetailPage()" :custom-style="customStyle" size="mini" :ripple="true">详情</u-button>
-				</div>
+
+				<u-icon v-if="!isFolder" class="u-m-r-20" name="play-right-fill" color="#999" label="开始"
+					label-color="#999" label-pos="bottom" label-size="20" size="20" margin-top="12"></u-icon>
+				<u-icon v-if="!isFolder" class="u-m-r-20" name="checkmark" color="#999" label="结束" label-color="#999"
+					label-pos="bottom" label-size="20" size="20" margin-top="12"></u-icon>
+				<u-icon class="u-m-r-20" name="order" color="#999" label="统计" label-color="#999" label-pos="bottom"
+					label-size="20" size="20" margin-top="12" @click="toActivityDetailPage()"></u-icon>
 			</u-cell-item>
 			<!-- 子节点 -->
 			<ul v-if="isFolder" v-show="isOpen">
 				<activity-item class="item" v-for="activity in childrenActivity" :item="activity"
-					:key="activity['guid']" :colorNumber="getColorNumber">
+					:key="activity['id']" :colorNumber="getColorNumber">
 				</activity-item>
 			</ul>
 		</li>
@@ -40,7 +44,7 @@
 		},
 		computed: {
 			childrenActivity: function() {
-				return this.$store.getters.getActivityChildren(this.item['guid'])
+				return this.$store.getters.getActivityChildren(this.item['id'])
 			},
 			// 如果有children数组,就渲染<ul>
 			isFolder: function() {
@@ -67,9 +71,9 @@
 					this.isOpen = !this.isOpen;
 				}
 			},
-			toActivityDetailPage: function(){
+			toActivityDetailPage: function() {
 				uni.navigateTo({
-				    url: '../../activityDetail/activityDetail?guid=' + this.item['guid']
+					url: '../../activityDetail/activityDetail?guid=' + this.item['id']
 				});
 			}
 		},

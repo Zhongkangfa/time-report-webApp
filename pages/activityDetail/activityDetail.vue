@@ -1,6 +1,18 @@
 <template>
 	<view>
-		<line-chart :activityName="activity['name']" :days="days" :weeks="weeks" :months="months" :years="years"></line-chart>
+		<h3>折线图</h3>
+		<line-chart :activityName="activity['name']" :days="days" :weeks="weeks" :months="months" :years="years">
+		</line-chart>
+		<u-line color="red" />
+		<h3>活动每次持续时间分布</h3>
+		<view class="charts-box">
+			<qiun-data-charts type="rose" :chartData="chartData2" background="none" :animation="false" />
+		</view>
+		<u-line color="red" />
+		<h3>活动备注词云</h3>
+		<view class="charts-box">
+			<qiun-data-charts type="word" :chartData="chartData3" background="none" :animation="false" />
+		</view>
 	</view>
 </template>
 
@@ -16,7 +28,7 @@
 			this.months = this.$store.state.summary[guid].months;
 			this.years = this.$store.state.summary[guid].years;
 		},
-		components:{
+		components: {
 			lineChart
 		},
 		data() {
@@ -25,7 +37,51 @@
 				days: Object,
 				weeks: Object,
 				months: Object,
-				years: Object
+				years: Object,
+				chartData2: {
+					"series": [{
+						"data": [{
+								"name": "一班",
+								"value": 50
+							},
+							{
+								"name": "二班",
+								"value": 30
+							},
+							{
+								"name": "三班",
+								"value": 20
+							},
+							{
+								"name": "四班",
+								"value": 18
+							},
+							{
+								"name": "五班",
+								"value": 8
+							}
+						]
+					}]
+				},
+				chartData3: {
+					"series": [{
+							"name": "跨全端图表",
+							"textSize": 25
+						},
+						{
+							"name": "微信小程序",
+							"textSize": 20
+						},
+						{
+							"name": "支付宝小程序",
+							"textSize": 20
+						},
+						{
+							"name": "百度小程序",
+							"textSize": 20
+						}
+					]
+				}
 			}
 		},
 		methods: {
@@ -69,5 +125,9 @@
 	.charts-box {
 		width: 100%;
 		height: 300px;
+	}
+	h3{
+		text-align: center;
+		margin-top: 20px;
 	}
 </style>
