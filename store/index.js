@@ -43,9 +43,17 @@ const store = new Vuex.Store({
 			//好害怕内存泄露
 			console.log("触发getActivity");
 			return function(id) {
-				return state.types.filter(activity => activity['id'] == id)[0];
+				return state.types.filter(activity => activity['id'] == id)[0] || null;
 			}
 		},
+		hasRecord(state, activityGuid){
+			//查看本地有没有记录
+			if(state.intervals){
+				
+			}
+			
+			//查看云端有没有记录
+		}
 	},
 	//修改state的方法
 	mutations: {
@@ -54,6 +62,23 @@ const store = new Vuex.Store({
 		},
 		addType(state, type){
 			state.types.push(type);
+			//本地初始化summary
+			state.summary[type.id] = {};
+			state.summary[type.id].name = type['name'];
+			state.summary[type.id].days = new Object();
+			state.summary[type.id].weeks = new Object();
+			state.summary[type.id].months = new Object();
+			state.summary[type.id].years = new Object();
+			
+			//存储到本地
+			this.dispatch('saveTypes');
+			this.dispatch('saveSummary');
+		},
+		deleteType(state, id){
+			state.types = state.types.filter(function(type) {
+			    return type.id != id;
+			});
+			delete state.summary[id];
 		},
 		setIntervals(state, intervals) {
 			state.intervals = intervals;

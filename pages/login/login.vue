@@ -8,7 +8,7 @@
 		<u-field v-model="password" type="password" label="密码" placeholder="请填写密码" required>
 		</u-field>
 		<u-button type="primary" shape="square" :ripple="true" ripple-bg-color="#a0cfff" :custom-style="customStyle"
-			@click="login()">
+			@click="login()" @keyup.enter="login()">
 			登录
 			<u-loading :show="waiting"></u-loading>
 		</u-button>

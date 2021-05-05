@@ -24,6 +24,7 @@
 	export default {
 		data() {
 			return {
+				parentId: null,
 				form: {
 					name: "",
 				},
@@ -54,14 +55,25 @@
 								group: this.isgroup.checked
 							},
 							success: (res) => {
-								let activity = {
-									"id": res.result.id,
-									"name": this.form.name,
-									"group": this.isgroup.checked,
-									"parent": null
-								};
-								this.$store.commit('addType', activity);
-								uni.navigateBack();
+								console.log(res);
+								if (res.result.id != null) {
+									console.log("进来了？");
+									let activity = {
+										"id": res.result.id,
+										"name": this.form.name,
+										"group": this.isgroup.checked,
+										"parent": this.parentId
+									};
+									this.$store.commit('addType', activity);
+									uni.navigateBack();
+								} else if (res.result.code === 30203) {
+									console.log(res.result.msg);
+									uni.reLaunch({
+										url: '/pages/login/login'
+									})
+								} else {
+									console.log(res.result.msg);
+								}
 							},
 							fail: (err) => {}
 						});
@@ -75,6 +87,9 @@
 		onReady() {
 			console.log("触发onReady");
 			this.$refs.uForm.setRules(this.rules);
+		},
+		onLoad(option) {
+			this.parentId = option.parentId;
 		}
 	}
 </script>

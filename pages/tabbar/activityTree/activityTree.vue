@@ -4,7 +4,7 @@
 			<ul style="list-style-type: none;margin:0;padding:0;">
 				<activity-item v-for="Activity in rootActivity" :item="Activity" :key="Activity['id']"
 					:colorNumber="0"></activity-item>
-				<u-cell-item @click="addActivity()" :title="'+ 添加'" :arrow="false" bg-color="#faebeb"></u-cell-item>
+				<u-cell-item @click="addActivity()"  :title="'添加'" :icon="'plus'" :arrow="false" bg-color="#f4f4f5"></u-cell-item>
 			</ul>
 		</u-cell-group>
 	</view>
@@ -32,6 +32,7 @@
 		},
 		computed: {
 			rootActivity: function() {
+				console.log(this.$store.getters.getRootActivity);
 				return this.$store.getters.getRootActivity;
 			}
 		},

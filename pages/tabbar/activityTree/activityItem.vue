@@ -3,20 +3,35 @@
 		<li>
 			<!-- 父节点 -->
 			<u-cell-item @click="toggle" :title="item['name']" :arrow="false" :bg-color="getColor(colorNumber)"
-				:icon="isFolder? 'list': ''">
+				:icon="item['group']? 'list': ''">
 
-				<u-icon v-if="!isFolder" class="u-m-r-20" name="play-right-fill" color="#999" label="开始"
-					label-color="#999" label-pos="bottom" label-size="20" size="20" margin-top="12"></u-icon>
-				<u-icon v-if="!isFolder" class="u-m-r-20" name="checkmark" color="#999" label="结束" label-color="#999"
-					label-pos="bottom" label-size="20" size="20" margin-top="12"></u-icon>
-				<u-icon class="u-m-r-20" name="order" color="#999" label="统计" label-color="#999" label-pos="bottom"
-					label-size="20" size="20" margin-top="12" @click="toActivityDetailPage()"></u-icon>
+				<u-icon v-if="!item['group'] && !isStart" class="u-m-r-20" name="play-right-fill" color="#999"
+					label="开始" label-color="#999" label-pos="bottom" label-size="20" size="20" margin-top="12"
+					@click="action"></u-icon>
+				<u-icon v-if="!item['group'] && isStart" class="u-m-r-20" name="pause" color="#999" label="暂停"
+					label-color="#999" label-pos="bottom" label-size="20" size="20" margin-top="12" @click="action">
+				</u-icon>
+				<u-icon v-if="!item['group']" class="u-m-r-20" name="checkmark" color="#999" label="结束"
+					label-color="#999" label-pos="bottom" label-size="20" size="20" margin-top="12" @click="finished">
+				</u-icon>
+				<u-icon v-if="!item['group']" class="u-m-r-20" name="order" color="#999" label="统计" label-color="#999"
+					label-pos="bottom" label-size="20" size="20" margin-top="12" @click="toActivityDetailPage">
+				</u-icon>
+				<u-icon v-if="!item['group']" class="u-m-r-20" name="trash-fill" color="#dd6161" label="删除"
+					label-color="#dd6161" label-pos="bottom" label-size="20" size="20" margin-top="12"
+					@click="deleteActivity">
+				</u-icon>
+				<!-- u-icon无法解决事件冒泡问题，改用u-button -->
+				<u-button v-if="item['group']" @click.stop="toActivityDetailPage" size="mini" type="primary"
+					shape="circle" :plain="true" :hair-line="false">详情</u-button>
 			</u-cell-item>
 			<!-- 子节点 -->
-			<ul v-if="isFolder" v-show="isOpen">
-				<activity-item class="item" v-for="activity in childrenActivity" :item="activity"
+			<ul v-if="item['group']" v-show="isOpen">
+				<activity-item v-if="isFolder" class="item" v-for="activity in childrenActivity" :item="activity"
 					:key="activity['id']" :colorNumber="getColorNumber">
 				</activity-item>
+				<u-cell-item @click="addActivity()" :title="'添加'" :icon="'plus'" :arrow="false" bg-color="#f4f4f5">
+				</u-cell-item>
 			</ul>
 		</li>
 	</view>
@@ -27,6 +42,7 @@
 		name: "activity-item",
 		data() {
 			return {
+				isStart: false,
 				isOpen: false,
 				colorList: ['#faebeb', '#ebf0fa', '#f3ebfa', '#ebfaf8'],
 				customStyle: {
@@ -63,19 +79,55 @@
 			}
 		},
 		methods: {
+			action() {
+				this.isStart = !this.isStart;
+			},
+			finished() {
+				this.isStart = false;
+			},
 			getColor: function() {
 				return this.colorList[this.colorNumber];
 			},
 			toggle: function() {
-				if (this.isFolder) {
+				if (this.item['group']) {
 					this.isOpen = !this.isOpen;
 				}
 			},
 			toActivityDetailPage: function() {
 				uni.navigateTo({
-					url: '../../activityDetail/activityDetail?guid=' + this.item['id']
+					url: '../../activityDetail/activityDetail?id=' + this.item['id']
 				});
-			}
+			},
+			addActivity() {
+				//需要填写：是不是group，名称
+				//跳转页面、
+				console.log("触发！");
+				uni.navigateTo({
+					url: '/pages/tabbar/activityTree/addActivity?parentId=' + this.item['id']
+				});
+			},
+			deleteActivity() {
+				//需要判断有没有联网
+				//删除types中的数据
+				console.log(this.item['id']);
+				uniCloud.callFunction({
+					name: 'deleteType',
+					data: {
+						id: this.item['id']
+					},
+					success: (res) => {
+						console.log(res);
+						if (res.result.deleted == 1) {
+							console.log(res);
+							console.log("删除成功");
+							this.$store.commit('deleteType', this.item['id']);
+						}
+					},
+					fail: (err) => {
+						console.log(err);
+					}
+				});
+			},
 		},
 	}
 </script>

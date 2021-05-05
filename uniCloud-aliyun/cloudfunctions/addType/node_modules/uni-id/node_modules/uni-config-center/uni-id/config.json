@@ -1,8 +1,8 @@
 {
 	"passwordSecret": "aaaaaa",
 	"tokenSecret": "bbbbbb",
-	"tokenExpiresIn": 7200,
-	"tokenExpiresThreshold": 600,
+	"tokenExpiresIn": 2592000,
+	"tokenExpiresThreshold": 259200,
 	"passwordErrorLimit": 6,
 	"passwordErrorRetryTime": 3600
 }

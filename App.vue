@@ -58,11 +58,11 @@
 			console.log("app launch");
 			this.initAuth();
 			if (this.$store.state.token != "") {
-				// console.log("加载Types");
-				// this.initTypes();
+				console.log("加载Types");
+				this.initTypes();
+				this.initSummary();
 				// console.log("加载Intervals");
 				// this.initIntervals();
-				// this.initSummary();
 			}else{
 				
 			}
