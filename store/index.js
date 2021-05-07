@@ -181,16 +181,8 @@ const store = new Vuex.Store({
 				for (let i = 0; i < keys.length; i++) {
 					let v = keys[i];
 					let k = x[v];
-					if (k[v] == undefined) {
-						k[v] = 0;
-					}
-					k[v] += duration;
+					k[v] = (k[v] || 0) + duration;
 				}
-				// console.log(state.summary[guid]['days'] === activity_days);
-				// state.summary[guid]['days'] = activity_days;
-				// state.summary[guid]['weeks'] = activity_weeks;
-				// state.summary[guid]['months'] = activity_months;
-				// state.summary[guid]['years'] = activity_years;
 				x = null;
 				if (start.date() != over.date()) {
 
@@ -210,10 +202,7 @@ const store = new Vuex.Store({
 					for (let i = 0; i < keys.length; i++) {
 						let v = keys[i];
 						let k = y[v];
-						if (k[v] == undefined) {
-							k[v] = 0;
-						}
-						k[v] += duration;
+						k[v] = (k[v] || 0) + duration;
 					}
 					y = null;
 				}

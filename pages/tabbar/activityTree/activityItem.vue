@@ -5,10 +5,10 @@
 			<u-cell-item @click="toggle" :title="item['name']" :arrow="false" :bg-color="getColor(colorNumber)"
 				:icon="item['group']? 'list': ''">
 
-				<u-icon v-if="!item['group'] && !isStart" class="u-m-r-20" name="play-right-fill" color="#999"
+				<u-icon v-if="!item['group']" v-show="!isStart" class="u-m-r-20" name="play-right-fill" color="#999"
 					label="开始" label-color="#999" label-pos="bottom" label-size="20" size="20" margin-top="12"
 					@click="action"></u-icon>
-				<u-icon v-if="!item['group'] && isStart" class="u-m-r-20" name="pause" color="#999" label="暂停"
+				<u-icon v-if="!item['group']" v-show="isStart" class="u-m-r-20" name="pause" color="#999" label="暂停"
 					label-color="#999" label-pos="bottom" label-size="20" size="20" margin-top="12" @click="action">
 				</u-icon>
 				<u-icon v-if="!item['group']" class="u-m-r-20" name="checkmark" color="#999" label="结束"
@@ -81,9 +81,16 @@
 		methods: {
 			action() {
 				this.isStart = !this.isStart;
+				if(this.isStart){
+					//发射事件，让父组件启动计时器
+					this.$emit("ActivityActioned", this.item['id'], 0);
+				}else{
+					this.$emit("ActivityActioned", this.item['id'], 1);
+				}
 			},
 			finished() {
 				this.isStart = false;
+				this.$emit("ActivityActioned", this.item['id'], -1);
 			},
 			getColor: function() {
 				return this.colorList[this.colorNumber];

@@ -20,11 +20,11 @@ after：
 
 我们重点先看子组件——activityItem。
 
-如图，每个节点（色块）就是一个activityItem，由'<li>'包裹。
+如图，每个节点（色块）就是一个activityItem，由'li'包裹。
 
-每个色块主要由两个部分组成： [<u-cell-item> ](https://uviewui.com/components/cell.html) 和'<ul>'，分别代表父节点和子节点。
+每个色块主要由两个部分组成： [u-cell-item ](https://uviewui.com/components/cell.html) 和'ul'，分别代表父节点和子节点。
 
-'<ul>'包裹着一下层子组件。经过测试，如果去掉'<ul>'的包裹，就没有向右的偏移量来区分父子组件。
+'ul'包裹着一下层子组件。经过测试，如果去掉'ul'的包裹，就没有向右的偏移量来区分父子组件。
 
 ![上下两个部分](C:\Users\kangfa\Desktop\作品与练习\time-report\document\image\activity-item骨架.png)
 
