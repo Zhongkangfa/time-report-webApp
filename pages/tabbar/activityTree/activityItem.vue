@@ -4,19 +4,15 @@
 			<!-- 父节点 -->
 			<u-cell-item @click="toggle" :title="item['name']" :arrow="false" :bg-color="getColor(colorNumber)"
 				:icon="item['group']? 'list': ''">
-
-				<u-icon v-if="!item['group']" v-show="!isStart" class="u-m-r-20" name="play-right-fill" color="#999"
-					label="开始" label-color="#999" label-pos="bottom" label-size="20" size="20" margin-top="12"
-					@click="action"></u-icon>
-				<u-icon v-if="!item['group']" v-show="isStart" class="u-m-r-20" name="pause" color="#999" label="暂停"
+				<!-- 启动按钮 -->
+				<u-icon v-if="!item['group']" class="u-m-r-20" name="play-right-fill" color="#999" label="行动"
 					label-color="#999" label-pos="bottom" label-size="20" size="20" margin-top="12" @click="action">
 				</u-icon>
-				<u-icon v-if="!item['group']" class="u-m-r-20" name="checkmark" color="#999" label="结束"
-					label-color="#999" label-pos="bottom" label-size="20" size="20" margin-top="12" @click="finished">
-				</u-icon>
+				<!-- 统计按钮 -->
 				<u-icon v-if="!item['group']" class="u-m-r-20" name="order" color="#999" label="统计" label-color="#999"
 					label-pos="bottom" label-size="20" size="20" margin-top="12" @click="toActivityDetailPage">
 				</u-icon>
+				<!-- 删除按钮 -->
 				<u-icon v-if="!item['group']" class="u-m-r-20" name="trash-fill" color="#dd6161" label="删除"
 					label-color="#dd6161" label-pos="bottom" label-size="20" size="20" margin-top="12"
 					@click="deleteActivity">
@@ -28,7 +24,8 @@
 			<!-- 子节点 -->
 			<ul v-if="item['group']" v-show="isOpen">
 				<activity-item v-if="isFolder" class="item" v-for="activity in childrenActivity" :item="activity"
-					:key="activity['id']" :colorNumber="getColorNumber">
+					:key="activity['id']" :colorNumber="getColorNumber"
+					v-on:ActivityActioned="$emit('ActivityActioned', $event)">
 				</activity-item>
 				<u-cell-item @click="addActivity()" :title="'添加'" :icon="'plus'" :arrow="false" bg-color="#f4f4f5">
 				</u-cell-item>
@@ -42,7 +39,6 @@
 		name: "activity-item",
 		data() {
 			return {
-				isStart: false,
 				isOpen: false,
 				colorList: ['#faebeb', '#ebf0fa', '#f3ebfa', '#ebfaf8'],
 				customStyle: {
@@ -80,17 +76,11 @@
 		},
 		methods: {
 			action() {
-				this.isStart = !this.isStart;
-				if(this.isStart){
-					//发射事件，让父组件启动计时器
-					this.$emit("ActivityActioned", this.item['id'], 0);
-				}else{
-					this.$emit("ActivityActioned", this.item['id'], 1);
-				}
-			},
-			finished() {
-				this.isStart = false;
-				this.$emit("ActivityActioned", this.item['id'], -1);
+				this.$emit("ActivityActioned", {
+					"name": this.item['name'],
+					"id": this.item['id'],
+					"pauseTime": 0
+				});
 			},
 			getColor: function() {
 				return this.colorList[this.colorNumber];

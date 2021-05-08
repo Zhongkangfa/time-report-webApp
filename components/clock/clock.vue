@@ -2,19 +2,33 @@
 	<view>
 		<u-cell-item :arrow="false" :icon="'clock'">
 			<view class="u-flex">
-				<span class="u-flex-2">{{ActivityName}}</span>
-				<span class="u-flex-8" style="text-align: center;">{{hours}} : {{minutes}} : {{seconds}}</span>
+				<view class="u-flex-8" style="text-align: center;" @click="show=true">
+					<!-- 活动名称 -->
+					<p>{{ActivityName}}</p>
+					<!-- 计时器：显示屏 -->
+					<p>{{hours}} : {{minutes}} : {{seconds}}</p>
+				</view>
+				<!-- 启动按钮 -->
 				<u-icon v-show="!isStart" class="u-m-r-20 u-flex-1" name="play-right-fill" color="#999" label="开始"
 					label-color="#999" label-pos="bottom" label-size="20" size="20" margin-top="12" @click="start">
 				</u-icon>
-				<u-icon v-show="isStart" class="u-m-r-20 u-flex-1" name="pause" color="#999" label="暂停" label-color="#999"
-					label-pos="bottom" label-size="20" size="20" margin-top="12" @click="pause">
+				<!-- 暂停按钮 -->
+				<u-icon v-show="isStart" class="u-m-r-20 u-flex-1" name="pause" color="#999" label="暂停"
+					label-color="#999" label-pos="bottom" label-size="20" size="20" margin-top="12" @click="pause">
 				</u-icon>
-				<u-icon class="u-m-r-20 u-flex-1" name="checkmark" color="#999" label="结束" label-color="#999" label-pos="bottom"
-					label-size="20" size="20" margin-top="12" @click="end">
+				<!-- 结束按钮 -->
+				<u-icon class="u-m-r-20 u-flex-1" name="checkmark" color="#999" label="结束" label-color="#999"
+					label-pos="bottom" label-size="20" size="20" margin-top="12" @click="end">
 				</u-icon>
 			</view>
 		</u-cell-item>
+		<view>
+			<u-popup v-model="show" mode="top" length="60%">
+				<view>
+					
+				</view>
+			</u-popup>
+		</view>
 	</view>
 </template>
 
@@ -24,19 +38,26 @@
 		name: "clock",
 		data() {
 			return {
+				isStart: false,
 				timer: null,
 				count: 0,
 				hours: "00",
 				minutes: "00",
 				seconds: "00",
 				start_time: 0,
-				intervals: []
+				ownPauseTime: 0,
+				intervals: [],
+				show: false
 			};
 		},
-		props:{
+		props: {
 			ActivityName: String,
-			isStart: Boolean,
-			isEnd: Boolean
+			ActivityId: String,
+			num: Number,
+			pauseTime: {
+				type: Number,
+				default: 0
+			}
 		},
 		methods: {
 			showNum(num) {
@@ -45,43 +66,70 @@
 				}
 				return num
 			},
+			test() {
+				console.log("触发修改事件");
+
+			},
 			start() {
+				//发送事件，让其他计时器停止
+				this.$emit('stopOther', {
+					"index": this.num,
+					"pauseTime": moment().unix()
+				});
+				//主动保持稳定
+				this.ownPauseTime = this.pauseTime;
+				//开始正常逻辑
 				this.isStart = true;
+				this.start_time = moment().unix();
+				//启动计时器
 				let that = this;
-				that.start_time = moment().unix();
-				console.log(this.count);
 				that.timer = setInterval(
 					function() {
+						if (that.ownPauseTime != that.pauseTime) {
+							that.pause();
+						}
 						that.count++;
+						let minutes = that.count / 60;
 						that.seconds = that.showNum(that.count % 60);
-						that.minutes = that.showNum(parseInt(that.count / 60) % 60);
-						that.hours = that.showNum(parseInt(that.count / 60 / 60));
+						that.minutes = that.showNum(parseInt(minutes) % 60);
+						that.hours = that.showNum(parseInt(minutes / 60));
 					},
 					1000);
 			},
 			end() {
-				this.isStart = false;
-				this.isEnd = true;
-				this.count = 0;
+				//关闭计时器
 				clearInterval(this.timer);
+				this.isStart = false;
+				this.count = 0;
 				const end_time = moment().unix();
-				this.hours = 0;
-				this.minutes = 0;
-				this.seconds = 0;
+				this.hours = '00';
+				this.minutes = '00';
+				this.seconds = '00';
 				this.intervals.push([this.start_time, moment().unix()]);
-				this.$emit('clockend', this.intervals);
+				this.$emit('clockend', {
+					"id": this.ActivityId,
+					"intervals": this.intervals,
+					"num": this.num
+				});
 				this.intervals = [];
-				this.$destroy();
 			},
 			pause() {
-				this.isStart = false;
 				clearInterval(this.timer);
-				this.intervals.push([this.start_time, moment().unix()]);
-				console.log(this.intervals[this.intervals.length - 1]);
+				this.isStart = false;
+				let end_time;
+				if (this.pauseTime != this.ownPauseTime) {
+					//说明外部触发了暂停
+					end_time = this.pauseTime;
+					this.ownPauseTime = this.pauseTime;
+				} else {
+					//说明状态保持稳定
+					end_time = moment().unix();
+				}
+				this.intervals.push([this.start_time, end_time]);
 			}
 		},
-		onLoad() {
-			this.isEnd = false;
+		mounted() {
+			this.start();
 		}
 	}
 </script>
