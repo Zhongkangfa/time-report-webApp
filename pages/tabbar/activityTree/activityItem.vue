@@ -41,12 +41,12 @@
 			return {
 				isOpen: false,
 				colorList: ['#faebeb', '#ebf0fa', '#f3ebfa', '#ebfaf8'],
-				customStyle: {
-					marginRight: '0px', // 注意驼峰命名，并且值必须用引号包括，因为这是对象
-					color: '#c8c9cc',
-					// "font-weight": 0,
-					// 'font-size': '5px'
-				}
+				// customStyle: {
+				// 	marginRight: '0px', // 注意驼峰命名，并且值必须用引号包括，因为这是对象
+				// 	color: '#c8c9cc',
+				// 	// "font-weight": 0,
+				// 	// 'font-size': '5px'
+				// }
 
 			}
 		},

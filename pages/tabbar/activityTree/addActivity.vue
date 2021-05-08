@@ -2,7 +2,6 @@
 	<view class="u-margin-26">
 		<u-form :model="form" ref="uForm">
 
-
 			<u-form-item>
 				<u-checkbox v-model="isgroup.checked" :name=" isgroup.name">
 					{{ isgroup.name }}

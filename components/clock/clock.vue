@@ -2,9 +2,9 @@
 	<view>
 		<u-cell-item :arrow="false" :icon="'clock'">
 			<view class="u-flex">
-				<view class="u-flex-8" style="text-align: center;" @click="show=true">
+				<view class="u-flex-8" style="text-align: center;width:0;" @click="show=true">
 					<!-- 活动名称 -->
-					<p>{{ActivityName}}</p>
+					<p id="activityName">{{ActivityName}}</p>
 					<!-- 计时器：显示屏 -->
 					<p>{{hours}} : {{minutes}} : {{seconds}}</p>
 				</view>
@@ -24,9 +24,7 @@
 		</u-cell-item>
 		<view>
 			<u-popup v-model="show" mode="top" length="60%">
-				<view>
-					
-				</view>
+				<clock-modify :clockInfo="getInfo()"></clock-modify>
 			</u-popup>
 		</view>
 	</view>
@@ -34,8 +32,12 @@
 
 <script>
 	import moment from 'moment';
+	import clockModify from './modify.vue'
 	export default {
 		name: "clock",
+		components: {
+			"clock-modify": clockModify
+		},
 		data() {
 			return {
 				isStart: false,
@@ -60,6 +62,13 @@
 			}
 		},
 		methods: {
+			getInfo(){
+				return {
+					"name": this.ActivityName,
+					"status": this.isStart? "运行":"暂停",
+					"startTime": this.start_time
+				}
+			},
 			showNum(num) {
 				if (num < 10) {
 					return '0' + num
@@ -134,6 +143,13 @@
 	}
 </script>
 
-<style>
-
+<style scoped>
+	#activityName {
+		padding-left: 35px;
+		padding-right: 35px;
+		text-align: center;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 </style>
