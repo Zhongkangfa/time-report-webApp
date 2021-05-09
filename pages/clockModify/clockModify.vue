@@ -13,6 +13,7 @@
 			<!-- 填写备注 -->
 			<u-form-item label="备注">
 				<u-input v-model="ActivityComment" type="text"></u-input>
+
 			</u-form-item>
 
 			<!-- 选择活动状态 -->
@@ -25,41 +26,48 @@
 				</u-radio-group>
 			</u-form-item>
 
+			<view class="u-flex">
+				<!-- 开始时间 -->
+				<u-form-item label="开始时间" prop="startTime">
+					<u-input v-model="form.startTime" type="text" :disabled="true" placeholder="点击选择"
+						@click="isStartTimeSelectorShow = true" />
+					<u-picker v-model="isStartTimeSelectorShow" mode="time" @confirm="setStartTime" :params="params"
+						:start-year="startYear.getFullYear()" :end-year="now.getFullYear()">
+					</u-picker>
+				</u-form-item>
+
+				<!-- 结束时间 -->
+				<u-form-item v-if="isEnd" label="结束时间" prop="endTime">
+					<u-input v-model="form.endTime" type="text" :disabled="true" placeholder="点击选择"
+						@click="isEndTimeSelectorShow = true" />
+					<u-picker v-model="isEndTimeSelectorShow" mode="time" @confirm="setEndTime" :params="params"
+						:start-year="startYear.getFullYear()" :end-year="now.getFullYear()">
+					</u-picker>
+				</u-form-item>
+			</view>
+			
+			<u-section id="intervals" title="修改时间" :right="true"></u-section>
+
 		</u-form>
-		<u-button @click="isIntervalsShow = !isIntervalsShow">修改时间</u-button>
-		<view>
-			<interval v-show="isIntervalsShow && clockStatus != '暂停'" :interval="firstInterval"></interval>
-			<interval v-show="isIntervalsShow" v-for="(interval, index) in intervals" :interval="interval" :key="index" :id="index" @intervalChanged="modifyInterval">
-			</interval>
-		</view>
 		<u-button @click="submit">确认修改</u-button>
 	</view>
 </template>
 
 <script>
-	import activitySelect from './activitySelect.vue';
-	import interval from '../interval/interval.vue';
+	import activitySelect from '../../components/clock/activitySelect.vue'
 	import moment from 'moment'
 	export default {
 		name: "clockModify",
 		components: {
-			"activity-select": activitySelect,
-			"interval": interval
+			"activity-select": activitySelect
 		},
 		mounted() {
-			//将计时器的全部信息都复制过来
 			console.log(this.clockInfo);
 			this.ActivityName = this.clockInfo['name'];
 			this.clockStatus = this.clockInfo['status'];
-			if(this.clockInfo['status']=="暂停"){this.isPause = true};
 			this.form.startTime = moment(this.clockInfo['startTime'] * 1000).format("YYYY-MM-DD hh:mm:ss");
-			this.intervals = this.clockInfo['intervals'];
-			this.ActivityId = this.clockInfo['id'];
 		},
 		computed: {
-			firstInterval() {
-				return [this.clockInfo['startTime'], moment().unix()];
-			}
 
 		},
 		props: {
@@ -72,16 +80,12 @@
 					startTime: null,
 				},
 				now: new Date(),
-				intervals: [],
 				startYear: new Date('1/1/2015'),
 				isEnd: false,
-				isPause: false,
-				isStart: true,
 				clockStatus: "",
 				activitySelectShow: false,
 				isStartTimeSelectorShow: false,
 				isEndTimeSelectorShow: false,
-				isIntervalsShow: false,
 				ActivityComment: "",
 				ActivityName: "",
 				ActivityId: "",
@@ -111,47 +115,40 @@
 		},
 		methods: {
 			submit() {
-				if(this.clockInfo['id'] != this.ActivityId){
-					this.$emit('ActivityTypeChange', [this.ActivityName, this.ActivityId]);
+				let info = null;
+				let st = moment(this.form.startTime, "YYYY-MM-DD hh:mm:ss");
+				let et = moment(this.form.endTime, "YYYY-MM-DD hh:mm:ss");
+				console.log(et);
+				// console.log(st,et);
+				if (this.clockStatus == "结束") {
+					if (et < st) {
+						console.log("开始时间不能大于结束时间。");
+						return;
+					}
+				} else {
+					et = null;
 				}
-				this.$emit('ActivityCommentChange', this.ActivityComment);
-				if(this.clockInfo['intervals'].toString() != this.intervals.toString()){
-					this.$emit('intervalsChange', this.intervals);
-				}
-				if(this.clockInfo['status'] != this.clockStatus){
-					this.$emit('clockStatusChange', this.clockStatus);
-				}
-				this.$emit('close');
-				
+				info = {
+					'name': this.ActivityName,
+					'id': this.ActivityId,
+					'comment': this.ActivityComment,
+					'startTime': moment(this.form.startTime, "YYYY-MM-DD kk:mm:ss").unix(),
+					'endTime': et,
+				};
+				this.$emit('clockModified', info);
 			},
 			getSelectedActivity(event) {
-				if (this.ActivityId != event['id']) {
-					this.ActivityName = event['name'];
-					this.ActivityId = event['id'];
-					this.activitySelectShow = false;
-					// this.$emit('ActivityTypeChange', [this.ActivityName, this.ActivityId]);
-				}
+				this.ActivityName = event['name'];
+				this.ActivityId = event['id'];
+				this.activitySelectShow = false;
 			},
 			clockStatusChange(name) {
-				if(this.clockStatus == name){
-					return;
-				}
+				console.log(name);
 				if (name == "结束") {
 					this.isEnd = true;
-					this.isPause = false;
-					this.isStart = false;
-				} else if(name == "暂停"){
+				} else {
 					this.isEnd = false;
-					this.isPause = true;
-					this.isStart = false;
-				}else if (name == "运行"){
-					this.isEnd = false;
-					this.isPause = false;
-					this.isStart = true;
 				}
-			},
-			modifyInterval(event){
-				this.intervals[event[2]] = [event[0], event[1]];
 			},
 			setStartTime(event) {
 				this.form.startTime = moment(event['timestamp'] * 1000).format("YYYY-MM-DD kk:mm:ss");

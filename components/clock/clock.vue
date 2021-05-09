@@ -23,8 +23,11 @@
 			</view>
 		</u-cell-item>
 		<view>
-			<u-popup v-model="show" mode="top" length="60%">
-				<clock-modify :clockInfo="getInfo()"></clock-modify>
+			<u-popup v-model="show" mode="center" height="80%" width="80%">
+				<clock-modify :clockInfo="clockInfo" @clockModified="modify" @close="show = false" @ActivityTypeChange="modifyType" @ActivityCommentChange="modifyComment" @intervalsChange="modifyIntervals" @clockStatusChange="modifyStatus"></clock-modify>
+				<br/><br/><br/>
+				<u-button @click="show = false" type="primary">关闭</u-button>
+				<br/>
 			</u-popup>
 		</view>
 	</view>
@@ -61,23 +64,39 @@
 				default: 0
 			}
 		},
-		methods: {
-			getInfo(){
+		computed:{
+			clockInfo(){
 				return {
+					"id": this.ActivityId,
 					"name": this.ActivityName,
 					"status": this.isStart? "运行":"暂停",
-					"startTime": this.start_time
+					"startTime": this.start_time,
+					'intervals': this.intervals
 				}
 			},
+		},
+		methods: {
 			showNum(num) {
 				if (num < 10) {
 					return '0' + num
 				}
 				return num
 			},
-			test() {
-				console.log("触发修改事件");
-
+			modify(info) {
+				console.log('modify响应');
+				console.log(info);
+			},
+			modifyType(event){
+				console.log("活动类别修改",event);
+			},
+			modifyComment(event){
+				console.log("备注修改", event);
+			},
+			modifyIntervals(event){
+				console.log("intervals修改", event);
+			},
+			modifyStatus(event){
+				console.log("状态修改", event);
 			},
 			start() {
 				//发送事件，让其他计时器停止
@@ -114,7 +133,7 @@
 				this.hours = '00';
 				this.minutes = '00';
 				this.seconds = '00';
-				this.intervals.push([this.start_time, moment().unix()]);
+				this.intervals.unshift([this.start_time, moment().unix()]);
 				this.$emit('clockend', {
 					"id": this.ActivityId,
 					"intervals": this.intervals,
@@ -134,7 +153,7 @@
 					//说明状态保持稳定
 					end_time = moment().unix();
 				}
-				this.intervals.push([this.start_time, end_time]);
+				this.intervals.unshift([this.start_time, end_time]);
 			}
 		},
 		mounted() {
